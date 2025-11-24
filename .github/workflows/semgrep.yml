@@ -1,0 +1,32 @@
+name: Semgrep Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  semgrep:
+    name: Run Semgrep SAST
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      - name: Run Semgrep scan
+        run: semgrep --config=auto --json --output semgrep-result.json
+
+      - name: Upload Semgrep artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: semgrep-results
+          path: semgrep-result.json
