@@ -1,0 +1,26 @@
+name: Gitleaks Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  gitleaks:
+    name: Run Gitleaks Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Gitleaks
+        uses: zricethezav/gitleaks-action@v2
+        with:
+          args: detect --report-format json --report-path gitleaks-report.json
+
+      - name: Upload Gitleaks artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: gitleaks-results
+          path: gitleaks-report.json
