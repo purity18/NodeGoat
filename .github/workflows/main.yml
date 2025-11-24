@@ -1,4 +1,4 @@
-name: Semgrep Scan
+name: CI Pipeline
 
 on:
   push:
@@ -9,48 +9,43 @@ on:
 jobs:
   semgrep:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.x"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
 
-    - name: Install Semgrep
-      run: pip install semgrep
+      - name: Install Semgrep
+        run: pip install semgrep
 
-    - name: Run Semgrep Scan
-      run: semgrep --config=auto
-name: Gitleaks Scan
+      - name: Run Semgrep Scan
+        run: semgrep --config=auto
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - name: Upload Semgrep Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: semgrep-report
+          path: semgrep-report.json
 
-jobs:
   gitleaks:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Gitleaks
-      uses: zricethezav/gitleaks-action@v2.9.0
-      with:
-        args: "--verbose --redact --report-format=json --report-path=gitleaks-report.json"
+      - name: Run Gitleaks Scan
+        uses: zricethezav/gitleaks-action@v2.9.0
+        with:
+          args: "--verbose --redact --report-format=json --report-path=gitleaks-report.json"
 
-    - name: Upload Gitleaks report
-      uses: actions/upload-artifact@v3
-      with:
-        name: gitleaks-report
-        path: gitleaks-report.json
+      - name: Upload Gitleaks Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: gitleaks-report
+          path: gitleaks-report.json
+
 
 
