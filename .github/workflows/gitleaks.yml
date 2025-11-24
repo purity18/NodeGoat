@@ -7,9 +7,8 @@ on:
     branches: [ master ]
 
 jobs:
-  scan:
+  gitleaks:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -17,4 +16,5 @@ jobs:
       - name: Run Gitleaks
         uses: zricethezav/gitleaks-action@v2
         with:
-          args: detect --source . --redact --report-format=json --report-path=gitleaks-report.json
+          args: "--verbose"
+
